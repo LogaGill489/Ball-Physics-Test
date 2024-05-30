@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ball_Physics_Test
+namespace Peggle
 {
     internal class Peg
     {

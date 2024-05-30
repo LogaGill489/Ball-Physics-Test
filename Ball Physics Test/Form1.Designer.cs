@@ -1,4 +1,4 @@
-﻿namespace Ball_Physics_Test
+﻿namespace Peggle
 {
     partial class Form1
     {

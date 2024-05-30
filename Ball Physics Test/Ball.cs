@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
-namespace Ball_Physics_Test
+namespace Peggle
 {
     internal class Ball
     {

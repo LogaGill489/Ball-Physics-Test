@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Ball_Physics_Test
+namespace Peggle
 {
     internal static class Program
     {

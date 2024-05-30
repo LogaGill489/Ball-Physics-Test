@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Ball_Physics_Test.Properties
+namespace Peggle.Properties
 {
 
 
