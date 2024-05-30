@@ -175,7 +175,6 @@ namespace Ball_Physics_Test
                         if (timeX > timeY)
                         {
                             ySpeed *= -1;
-                            y = p.y - size;
                         }
                         else if (timeY > timeX)
                             xSpeed *= -1;
