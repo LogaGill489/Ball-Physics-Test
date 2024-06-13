@@ -15,7 +15,16 @@ namespace Peggle
         public Form1()
         {
             InitializeComponent();
-            ChangeScreen(this, new TestScreen());
+           // onStart();
+        }
+
+        void onStart()
+        {
+            Rectangle screenSize = Screen.PrimaryScreen.Bounds;
+            this.Width = screenSize.Width;
+            this.Width = screenSize.Height;
+
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         public static void ChangeScreen(object sender, UserControl next)
@@ -39,6 +48,11 @@ namespace Peggle
             f.Controls.Add(next);
             Cursor.Position = next.PointToScreen(new Point(next.Width / 2, (next.Height / 2) + 100));
             next.Focus();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            ChangeScreen(this, new GameScreen());
         }
     }
 }

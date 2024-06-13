@@ -1,6 +1,6 @@
 ﻿namespace Peggle
 {
-    partial class TestScreen
+    partial class GameScreen
     {
         /// <summary> 
         /// Required designer variable.
@@ -58,19 +58,20 @@
             this.yLabel.TabIndex = 1;
             this.yLabel.Text = "Y-Position: 404";
             // 
-            // TestScreen
+            // GameScreen
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.DimGray;
             this.Controls.Add(this.yLabel);
             this.Controls.Add(this.xLabel);
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.Transparent;
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "TestScreen";
-            this.Size = new System.Drawing.Size(1125, 650);
+            this.Name = "GameScreen";
+            this.Size = new System.Drawing.Size(1800, 1000);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.TestScreen_Paint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameScreen_KeyDown);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TestScreen_MouseClick);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TestScreen_MouseMove);
             this.ResumeLayout(false);

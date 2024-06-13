@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Ball_Physics_Test;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +35,7 @@ namespace Peggle
             ballRegion = new Region(ballPath);
         }
 
-        public void doGravity(int screenHeight, int screenWidth, List<Peg> pegs) //ball physics with walls + gravity
+        public void doGravity(int screenHeight, int screenWidth, int xZero, int yZero, List<Peg> pegs) //ball physics with walls + gravity
         {
             prevPosition = new PointF(x, y);
             ballPath.Reset();
@@ -68,21 +70,20 @@ namespace Peggle
                 pegs.Remove(stoppedPeg);
             }
 
-
             if (x > screenWidth - size)
             {
                 xSpeed *= -1;
                 x = screenWidth - size;
             }
-            if (x < 0)
+            if (x < xZero)
             {
                 xSpeed *= -1;
-                x = 0;
+                x = xZero;
             }
-            if (y < 0)
+            if (y < yZero)
             {
                 ySpeed *= -1;
-                y = 0;
+                y = yZero;
             }
             const float xSLOWER = (float)0.15;
             if (Math.Abs(ySpeed) == 0 || Math.Abs(xSpeed) > 5)
@@ -108,7 +109,7 @@ namespace Peggle
                 if (recentlyHit[i])
                 {
                     watchReset[i]++;
-                    if (watchReset[i] >= 3) { watchReset[i] = 0; recentlyHit[i] = false; ySpeed = (int)ySpeed; }
+                    if (watchReset[i] >= 4) { watchReset[i] = 0; recentlyHit[i] = false; ySpeed = (int)ySpeed; }
                 }
             }
         }
@@ -133,107 +134,116 @@ namespace Peggle
         bool onPeg = false;
         Stopwatch onBlockTimer = new Stopwatch();
         Peg stoppedPeg;
+        Peg lasthitPeg;
 
-        public bool BlockCollision(Peg p)
+        bool hitSide = false;
+        int tick = 4;
+
+        public bool BlockCollision(Peg p, Graphics g)
         {
             RectangleF blockRec = new RectangleF(p.x, p.y, p.width, p.height);
             RectangleF ballRec = new RectangleF(x, y, size, size);
 
-            if (ballRec.IntersectsWith(blockRec))
+            Region blockRegion = new Region(blockRec);
+            blockRegion.Intersect(ballRegion);
+
+            if (tick <= 2)
             {
-                int[] colEdgesMove;
-                int[] colEdgesBrick;
-                int distX;
-                int distY;
-                double timeX;
-                double timeY;
-                if (xSpeed > 0)
+                tick++;
+            }
+            if (tick == 3)
+            {
+                tick++;
+                hitSide = false;
+            }
+
+            if (!blockRegion.IsEmpty(g))
+            {
+                RectangleF location = blockRegion.GetBounds(g);
+                if (location.Width == location.Height)
                 {
-                    if (ySpeed > 0)
+                    ySpeed *= -1;
+                    xSpeed *= -1;
+                    if (p.y + (blockRec.Height / 2) > prevPosition.Y + (size / 2) && p.x + (blockRec.Width / 2) > prevPosition.X + (size / 2)) //above and left
                     {
-                        colEdgesMove = new int[] { (int)ballRec.Right, (int)ballRec.Bottom };
-                        colEdgesBrick = new int[] { (int)blockRec.Left, (int)blockRec.Top };
-                        distX = Math.Abs(colEdgesBrick[0] - colEdgesMove[0]);
-                        distY = Math.Abs(colEdgesBrick[1] - colEdgesMove[1]);
-                        timeX = Math.Abs((double)distX / xSpeed);
-                        timeY = Math.Abs((double)distY / ySpeed);
-                        if (timeX > timeY)
-                            ySpeed *= -1;
-                        else if (timeY > timeX)
-                            xSpeed *= -1;
-                        else
-                            Console.WriteLine("Collided at a corner");
+                        x = p.x - size;
+                        y = p.y - size;
+                    }
+                    else if (p.y + (blockRec.Height / 2) > prevPosition.Y + (size / 2) && p.x + (blockRec.Width / 2) < prevPosition.X + (size / 2)) //above and right
+                    {
+                        x = p.x + p.width;
+                        y = p.y - size;
+                    }
+                    else if (p.x + (blockRec.Width / 2) > x + (size / 2)) //below left
+                    {
+                        x = p.x - size;
+                        y = p.y + p.height;
+                    }
+                    else //below right
+                    {
+                        x = p.x + p.width;
+                        y = p.y + p.height;
+                    }
+                }
+                if (location.Width > location.Height)
+                {
+                    if (p.y + (blockRec.Height / 2) > prevPosition.Y + (size / 2)) //above
+                    {
+                        y = p.y - size;
+                        y++;
+                        if (Math.Abs(ySpeed) <= 2 && Math.Abs(xSpeed) < 1.5)
+                        {
+                            ySpeed = 0;
+                            onPeg = true;
+                            onBlockTimer.Start();
+                            stoppedPeg = p;
+                        }
                     }
                     else
                     {
-                        colEdgesMove = new int[] { (int)ballRec.Right, (int)ballRec.Top };
-                        colEdgesBrick = new int[] { (int)blockRec.Left, (int)blockRec.Bottom };
-                        distX = Math.Abs(colEdgesBrick[0] - colEdgesMove[0]);
-                        distY = Math.Abs(colEdgesBrick[1] - colEdgesMove[1]);
-                        timeX = Math.Abs((double)distX / xSpeed);
-                        timeY = Math.Abs((double)distY / ySpeed);
-                        if (timeX > timeY)
-                        {
-                            ySpeed *= -1;
-                        }
-                        else if (timeY > timeX)
-                            xSpeed *= -1;
-                        else
-                            Console.WriteLine("Collided at a corner");
+                        y = p.y + p.height;
+                        y--;
                     }
+                    ySpeed *= -1;
                 }
                 else
                 {
-                    if (ySpeed > 0)
+                    if (hitSide)
                     {
-                        colEdgesMove = new int[] { (int)ballRec.Left, (int)ballRec.Bottom };
-                        colEdgesBrick = new int[] { (int)blockRec.Right, (int)blockRec.Top };
-                        distX = Math.Abs(colEdgesBrick[0] - colEdgesMove[0]);
-                        distY = Math.Abs(colEdgesBrick[1] - colEdgesMove[1]);
-                        timeX = Math.Abs((double)distX / xSpeed);
-                        timeY = Math.Abs((double)distY / ySpeed);
-                        if (timeX > timeY)
+                        if (p.y + (blockRec.Height / 2) > y + (size / 2)) //above
                         {
-                            ySpeed *= -1;
-                            if (Math.Abs(ySpeed) <= 2 && Math.Abs(xSpeed) < 1.5)
-                            {
-                                ySpeed = 0;
-                                onPeg = true;
-                                onBlockTimer.Start();
-                                stoppedPeg = p;
-                            }
-                            else
-                            {
-                                ySpeed += 3;
-                            }
                             y = p.y - size;
+                            y++;
                         }
-                        else if (timeY > timeX)
-                            xSpeed *= -1;
-                        else
-                            Console.WriteLine("Collided at a corner");
+                        else //below
+                        {
+                            y = p.y + p.height;
+                            y++;
+                        }
+                        //hitSide = false;
+                        ySpeed *= -1;
                     }
                     else
                     {
-                        colEdgesMove = new int[] { (int)ballRec.Left, (int)ballRec.Top };
-                        colEdgesBrick = new int[] { (int)blockRec.Right, (int)blockRec.Bottom };
-                        distX = Math.Abs(colEdgesBrick[0] - colEdgesMove[0]);
-                        distY = Math.Abs(colEdgesBrick[1] - colEdgesMove[1]);
-                        timeX = Math.Abs((double)distX / xSpeed);
-                        timeY = Math.Abs((double)distY / ySpeed);
-                        if (timeX > timeY)
-                            ySpeed *= -1;
-                        else if (timeY > timeX)
-                            xSpeed *= -1;
+                        if (p.x + (blockRec.Width / 2) > x + (size / 2)) //to the left
+                        {
+                            x = p.x - size;
+                        }
                         else
-                            Console.WriteLine("Collided at a corner");
+                        {
+                            x = p.x + p.width;
+                        }
+
+                        xSpeed *= -1;
+                        hitSide = true;
+                        tick = 0;
                     }
                 }
             }
             return blockRec.IntersectsWith(ballRec);
         }
 
-        public bool circleCollision(RectangleF pegHitBox, Graphics e, int listPosition)
+        public bool circleCollision(RectangleF pegHitBox, Graphics e, int listPosition, bool paddleHit, float paddleSpeed)
         {
             float xMath;
             PointF pivotPoint;
@@ -248,20 +258,33 @@ namespace Peggle
             pegPath.AddEllipse(pegHitBox);
             pegRegion = new Region(pegHitBox);
 
+            if (paddleHit && listPosition == 1)
+            {
+                pegRegion.Exclude(new RectangleF(pegHitBox.X, pegHitBox.Y + 25, 50, 25));
+                pegRegion.Exclude(new RectangleF(pegHitBox.X + 25, pegHitBox.Y, 25, 25));
+                state = 1;
+            }
+            else if (paddleHit && listPosition == 2)
+            {
+                pegRegion.Exclude(new RectangleF(pegHitBox.X, pegHitBox.Y + 25, 50, 25));
+                pegRegion.Exclude(new RectangleF(pegHitBox.X, pegHitBox.Y, 25, 25));
+                state = 2;
+            }
+
             pegRegion.Intersect(tempBallRegion);
 
             //bounce curve modelled in desmos, which can be found here: "https://www.desmos.com/calculator/emiewzq0xk"
             //calculates slope of derivative
             if (!pegRegion.IsEmpty(e) && !recentlyHit[listPosition])
             {
-                if (y + (size / 2) < pegHitBox.Y + (pegHitBox.Height / 2) && x + (size / 2) < pegHitBox.X + (pegHitBox.Width / 2)) //checks for top-left collision
+                if (y + (size / 2) < pegHitBox.Y + (pegHitBox.Height / 2) && x + (size / 2) < pegHitBox.X + (pegHitBox.Width / 2) || state == 1) //checks for top-left collision
                 {
                     xMath = x + (size / 2) - (pegHitBox.X + pegHitBox.Width / 2);
                     slope = (float)(-xMath / Math.Sqrt(Math.Pow(pegHitBox.Width, 2) - Math.Pow(xMath, 2)));
                     pivotPoint = upperPivot(xMath / 2, pegHitBox, true);
                     state = 1;
                 }
-                else if (y + (size / 2) < pegHitBox.Y + (pegHitBox.Height / 2)) // top-right collision
+                else if (y + (size / 2) < pegHitBox.Y + (pegHitBox.Height / 2) || state == 2) // top-right collision
                 {
                     xMath = x + (size / 2) - (pegHitBox.X + pegHitBox.Width / 2);
                     slope = (float)(-xMath / Math.Sqrt(Math.Pow(pegHitBox.Width, 2) - Math.Pow(xMath, 2)));
@@ -377,8 +400,17 @@ namespace Peggle
 
                     xSpeed *= (float)0.5;
                     ySpeed *= (float)0.5;
+
+                    if (paddleHit)
+                    {
+                        if ((paddleSpeed > 0 && state == 2) || (paddleSpeed < 0 && state == 1))
+                        {
+                            xSpeed += paddleSpeed;
+                        }
+                    }
                 }
-                recentlyHit[listPosition] = true;
+                if (!paddleHit)
+                    recentlyHit[listPosition] = true;
 
                 return true;
             }
