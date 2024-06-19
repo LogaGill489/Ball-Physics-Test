@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -41,6 +42,14 @@ namespace Peggle
         PointF prevPosition;
         PointF cursorPoint;
 
+        Stopwatch recentlyScored = new Stopwatch();
+
+        List<Stopwatch> pegGlow = new List<Stopwatch>();
+        List<int> hitArrayLocations = new List<int>();
+
+        RectangleF lPadHitBox = new Rectangle();
+        RectangleF rPadHitBox = new RectangleF();
+
         public GameScreen()
         {
             InitializeComponent();
@@ -71,7 +80,7 @@ namespace Peggle
 
         void onStart()
         {
-            paddle = new Paddle((this.Width / 2) - 100, this.Height - 35, 200, 10, 9);
+            paddle = new Paddle((this.Width / 2) - 100, this.Height - 35, 200, 35, 9);
             updateCurve();
 
             int storage = 0;
@@ -109,7 +118,7 @@ namespace Peggle
                         orangePeg = randGen.Next(0, pegs.Count);
                     }
                 }
-                pegs[orangePeg].colour = new SolidBrush(Color.FromArgb(255, 210, 118, 65));
+                pegs[orangePeg].colour = new SolidBrush(Color.FromArgb(255, 210, 103, 50));
                 pegs[orangePeg].colState = "orange";
             }
 
@@ -125,7 +134,18 @@ namespace Peggle
 
         private void TestScreen_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.FillRegion(Brushes.White, ball.ballRegion);
+            for (int i = 0; i < hitArrayLocations.Count; i++)
+            {
+                float speedInc = 20;
+                int outwardsAdjustment = 5;
+                RectangleF glowEffect = new RectangleF(pegs[hitArrayLocations[i]].x - outwardsAdjustment - (int)(pegGlow[i].ElapsedMilliseconds / speedInc), pegs[hitArrayLocations[i]].y - outwardsAdjustment - (int)(pegGlow[i].ElapsedMilliseconds / speedInc),
+                pegs[hitArrayLocations[i]].width + (2 * outwardsAdjustment) + (2 * (int)(pegGlow[i].ElapsedMilliseconds / speedInc)), pegs[hitArrayLocations[i]].height + (2 * outwardsAdjustment) + (2 * (int)(pegGlow[i].ElapsedMilliseconds / speedInc)));
+                if (pegs[hitArrayLocations[i]].circle)
+                    e.Graphics.DrawEllipse(Pens.Orange, glowEffect);
+                else
+                    e.Graphics.DrawRectangle(Pens.Orange, new Rectangle((int)glowEffect.X, (int)glowEffect.Y, (int)glowEffect.Width, (int)glowEffect.Height));
+            }
+
             foreach (Peg peg in pegs)
             {
                 Pen trim = new Pen(Color.FromArgb(255, 193, 98));
@@ -142,14 +162,14 @@ namespace Peggle
             }
 
             // Draws paddle
-            e.Graphics.FillRectangle(Brushes.White, paddle.x, paddle.y, paddle.width, paddle.height);
+            RectangleF paddleImg = new RectangleF(paddle.x - 57, paddle.y - 29, 314, 65);
+            e.Graphics.DrawImage(Resources.paddle, paddleImg);
 
-            e.Graphics.FillRegion(Brushes.White, lPadRegion);
-            e.Graphics.FillRegion(Brushes.White, rPadRegion);
+            //e.Graphics.FillRectangle(Brushes.White, paddle.x, paddle.y, paddle.width, paddle.height);
+            //e.Graphics.FillRegion(Brushes.White, lPadRegion);
+            //e.Graphics.FillRegion(Brushes.White, rPadRegion);
 
-            e.Graphics.FillRectangle(Brushes.Gray, 0, 0, 200, this.Height);
-            e.Graphics.FillRectangle(Brushes.Gray, this.Width - 200, 0, 200, this.Height);
-
+            //cursorPoint is a PointF tracking your position
             Pen pen = new Pen(Color.Black, 20);
             Pen goldPen = new Pen(Color.FromArgb(255, 193, 98), 22);
             if (cursorPoint.Y >= 5)
@@ -185,6 +205,41 @@ namespace Peggle
 
             Rectangle circ = new Rectangle((this.Width / 2) - 60, -60, 120, 120);
             e.Graphics.DrawImage(Resources.goldCircle, circ);
+
+            e.Graphics.DrawImage(Resources.peggleBall, ball.x, ball.y, ball.size, ball.size);
+            //e.Graphics.FillRegion(Brushes.White, ball.ballRegion);
+
+            //left and right border items and bg
+            Brush borderBrush = new SolidBrush(Color.FromArgb(50, 50, 50));
+            e.Graphics.FillRectangle(borderBrush, 0, 0, 200, this.Height);
+            e.Graphics.FillRectangle(borderBrush, this.Width - 200, 0, 200, this.Height);
+
+            //RectangleF ballCount = new RectangleF(0, 25, 200, 200);
+            //RectangleF resized = new RectangleF(ballCount.X + 40, ballCount.Y + 40, 120, 120);
+            //Brush innerFill = new SolidBrush(Color.FromArgb(100, 255, 255, 255));
+
+            //e.Graphics.FillEllipse(innerFill, resized);
+            //e.Graphics.DrawImage(Resources.peggleBall, resized);
+            //e.Graphics.DrawImage(Resources.goldSideCircle, ballCount);
+            //PaintText(e.Graphics, Convert.ToString(lives), 30, new PointF(ballCount.X + (ballCount.Width / 2) - 40, ballCount.Y + (ballCount.Height / 2) - 31), Color.FromArgb(255, 193, 98));
+
+            //RectangleF character = new RectangleF(this.Width - 200, 25, 200, 200);
+            //resized = new RectangleF(character.X + 40, character.Y + 40, 120, 120);
+            //e.Graphics.FillEllipse(innerFill, resized);
+            //e.Graphics.DrawImage(Resources.goldSideCircle, character);
+
+
+            //free ball / no ball
+            if (recentlyScored.IsRunning)
+            {
+                float speedInc = 10;
+                Rectangle freeBallRect = new Rectangle((this.Width / 2) - 150, (this.Height / 2) - 150, 300, 300);
+                Rectangle glowEffect = new Rectangle(freeBallRect.X - 100 - (int)(recentlyScored.ElapsedMilliseconds / speedInc), freeBallRect.Y - 100 - (int)(recentlyScored.ElapsedMilliseconds / speedInc),
+                    500 + (2 * (int)(recentlyScored.ElapsedMilliseconds / speedInc)), 500 + (2 * (int)(recentlyScored.ElapsedMilliseconds / speedInc)));
+
+                e.Graphics.DrawImage(Resources.freeBallGlow, glowEffect);
+                e.Graphics.DrawImage(Resources.freeBall, freeBallRect);
+            }
         }
 
         private void gameTimer_Tick(object sender, EventArgs e)
@@ -193,11 +248,15 @@ namespace Peggle
             yLabel.Text = $"Y-Speed: {cursorPoint.Y}";
             if (!ballIsShot)
             {
-
+                if (recentlyScored.ElapsedMilliseconds > 2000)
+                {
+                    recentlyScored.Reset();
+                }
             }
             else
             {
                 ball.doGravity(this.Height, this.Width - 200, 200, 0, pegs);
+                int hitPeg = -1;
                 using (Graphics g = this.CreateGraphics())
                 {
                     xLabel.Text = $"X-Position: {ball.x}";
@@ -206,17 +265,37 @@ namespace Peggle
                     {
                         if (pegs[i].circle)
                         {
-                            ball.circleCollision(new RectangleF(pegs[i].x, pegs[i].y, pegs[i].width, pegs[i].height), g, i, false, 0);
+                            hitPeg = ball.circleCollision(new RectangleF(pegs[i].x, pegs[i].y, pegs[i].width, pegs[i].height), g, i, false, 0);
+                            if (hitPeg != -1 && !pegs[i].hit) { adjustColorState(i); break; }
+                            else { hitPeg = -1; }
                         }
                         else
                         {
-                            ball.BlockCollision(pegs[i], g);
+                            bool state = false;
+                            state = ball.BlockCollision(pegs[i], g);
+                            if (state && !pegs[i].hit) { adjustColorState(i); hitPeg = i; break; }
+                            else { hitPeg = -1; }
                         }
 
                     }
                     ball.circleCollision(lPadHitBox, g, 1, true, paddle.speed);
                     ball.circleCollision(rPadHitBox, g, 2, true, paddle.speed);
                     //if (removePeg) pegs = new Peg (0, 0, 0, 0, true);
+                }
+
+                if (hitPeg != -1)
+                {
+                    hitArrayLocations.Add(hitPeg);
+                    pegGlow.Add(new Stopwatch());
+                    pegGlow[pegGlow.Count - 1].Start();
+                }
+                for (int i = 0; i < pegGlow.Count; i++)
+                {
+                    if (pegGlow[i].IsRunning && pegGlow[i].ElapsedMilliseconds > 500)
+                    {
+                        pegGlow.RemoveAt(i);
+                        hitArrayLocations.RemoveAt(i);
+                    }
                 }
 
                 if (active)
@@ -232,6 +311,11 @@ namespace Peggle
                     ball.xSpeed = xSp;
                     ball.ySpeed = ySp;
                 }
+
+                if (new RectangleF(ball.x, ball.y, ball.size, ball.size).IntersectsWith(new RectangleF(paddle.x, paddle.y, paddle.width, paddle.height)))
+                {
+                    newShot(true);
+                }
             }
             paddle.Move(this.Width);
             updateCurve();
@@ -239,8 +323,26 @@ namespace Peggle
             Refresh();
         }
 
-        RectangleF lPadHitBox = new Rectangle();
-        RectangleF rPadHitBox = new RectangleF();
+        private void adjustColorState(int i)
+        {
+            pegs[i].hit = true;
+            int upAdjust = 30;
+            switch (pegs[i].colState)
+            {
+                case "orange":
+                    pegs[i].colour = new SolidBrush(Color.FromArgb(210, 103 + (upAdjust / 2), 50 + (upAdjust / 2)));
+                    break;
+                case "blue":
+                    pegs[i].colour = new SolidBrush(Color.FromArgb(7, 41 + upAdjust, 127 + upAdjust));
+                    break;
+                case "purple":
+                    pegs[i].colour = new SolidBrush(Color.FromArgb(214, 37 + upAdjust, 220 + upAdjust));
+                    break;
+                case "green":
+                    pegs[i].colour = new SolidBrush(Color.FromArgb(17, 156 + upAdjust, 0 + upAdjust));
+                    break;
+            }
+        }
 
         private void updateCurve()
         {
@@ -259,6 +361,35 @@ namespace Peggle
             rPadRegion = new Region(gPath);
             rPadRegion.Exclude(new RectangleF(paddle.x + (int)paddle.width - 25, paddle.y + 10, 50, 25));
             rPadRegion.Exclude(new RectangleF(paddle.x + (int)paddle.width - 25, paddle.y - 15, 25, 25));
+        }
+
+        public void newShot(bool scored)
+        {
+            lives--;
+            ballIsShot = false;
+            ball.x = 2000;
+            ball.y = 2000;
+
+            ball.ballPath.Reset();
+            ball.ballPath.AddEllipse(new RectangleF(ball.x, ball.y, ball.size, ball.size));
+            ball.ballRegion = new Region(ball.ballPath);
+            ball.xSpeed = 0;
+            ball.ySpeed = 0;
+
+            if (scored)
+            {
+                lives++;
+                recentlyScored.Start();
+            }
+        }
+
+        static public void PaintText(Graphics e, string displayText, int size, PointF position, Color color)
+        {
+            Font myFont = new Font("Elephant", size, FontStyle.Bold);
+            SolidBrush brush = new SolidBrush(color);
+            e.DrawString(displayText, myFont, brush, position.X, position.Y);
+            brush.Dispose();
+            myFont.Dispose();
         }
 
         private void TestScreen_MouseMove(object sender, MouseEventArgs e)
@@ -299,11 +430,11 @@ namespace Peggle
             {
                 ball.x = shotPosition.X - (ball.size / 2);
                 ball.y = shotPosition.Y - (ball.size / 2);
-                ball.xSpeed = (float)0.2 * (ball.x - (this.Width / 2));
-                ball.ySpeed = (float)0.2 * (ball.y - 5);
+                ball.xSpeed = (float)0.23 * (ball.x - (this.Width / 2));
+                ball.ySpeed = (float)0.23 * (ball.y - 5);
                 ballIsShot = true;
             }
-            
+
             else if (gameTestState) //allows for picking up and throwing ball with mouse if in testing state
             {
                 if (active)

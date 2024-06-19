@@ -19,7 +19,7 @@ namespace Peggle
         public float x, y, size, xSpeed, ySpeed;
         public Region ballRegion = new Region();
         PointF prevPosition = new PointF();
-        GraphicsPath ballPath = new GraphicsPath();
+        public GraphicsPath ballPath = new GraphicsPath();
 
         public List<bool> recentlyHit = new List<bool>();
         public List<int> watchReset = new List<int>();
@@ -43,7 +43,7 @@ namespace Peggle
             {
                 if (y < screenHeight - size - 4)
                 {
-                    ySpeed += 1;
+                    GameScreen.newShot(false);
                 }
                 else
                 {
@@ -70,6 +70,7 @@ namespace Peggle
                 pegs.Remove(stoppedPeg);
             }
 
+            //bounce off walls
             if (x > screenWidth - size)
             {
                 xSpeed *= -1;
@@ -85,6 +86,8 @@ namespace Peggle
                 ySpeed *= -1;
                 y = yZero;
             }
+
+            //gravity effect
             const float xSLOWER = (float)0.15;
             if (Math.Abs(ySpeed) == 0 || Math.Abs(xSpeed) > 5)
             {
@@ -239,11 +242,12 @@ namespace Peggle
                         tick = 0;
                     }
                 }
+                return true;
             }
-            return blockRec.IntersectsWith(ballRec);
+            return false;
         }
 
-        public bool circleCollision(RectangleF pegHitBox, Graphics e, int listPosition, bool paddleHit, float paddleSpeed)
+        public int circleCollision(RectangleF pegHitBox, Graphics e, int listPosition, bool paddleHit, float paddleSpeed)
         {
             float xMath;
             PointF pivotPoint;
@@ -412,9 +416,9 @@ namespace Peggle
                 if (!paddleHit)
                     recentlyHit[listPosition] = true;
 
-                return true;
+                return listPosition;
             }
-            return false;
+            return -1;
         }
 
         PointF upperPivot(float xP, RectangleF hitBox, bool left)

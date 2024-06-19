@@ -111,5 +111,44 @@
   <ItemGroup>
     <None Include="Resources\goldCircle.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\paddle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\goldSideCircle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\peggleBall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\freeBall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\noBall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\freeBallGlow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pegGlow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\worldBackground1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\worldBackground2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\worldBackground3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\worldBackground4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flameGIF.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flameNoBall.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
