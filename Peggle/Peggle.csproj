@@ -56,6 +56,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoseScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LoseScreen.Designer.cs">
+      <DependentUpon>LoseScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Paddle.cs" />
     <Compile Include="Peg.cs" />
     <Compile Include="Program.cs" />
@@ -72,8 +78,17 @@
     <Compile Include="TitleScreen.Designer.cs">
       <DependentUpon>TitleScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="WinScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WinScreen.Designer.cs">
+      <DependentUpon>WinScreen.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoseScreen.resx">
+      <DependentUpon>LoseScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -90,6 +105,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TitleScreen.resx">
       <DependentUpon>TitleScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WinScreen.resx">
+      <DependentUpon>WinScreen.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">

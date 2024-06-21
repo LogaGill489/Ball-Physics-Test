@@ -22,8 +22,8 @@ namespace Peggle
         PointF prevPosition = new PointF();
         public GraphicsPath ballPath = new GraphicsPath();
 
-        public List<bool> recentlyHit = new List<bool>();
-        public List<int> watchReset = new List<int>();
+        static public List<bool> recentlyHit = new List<bool>();
+        static public List<int> watchReset = new List<int>();
         int removedStorage = 0;
         static public float initalSpeedMultiplier = (float)1.4;
         public Ball(float _x, float _y, float _size, float _xSpeed, float _ySpeed)

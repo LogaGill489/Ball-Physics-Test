@@ -20,7 +20,7 @@ namespace Ball_Physics_Test
 
         private void TitleScreen_Load(object sender, EventArgs e)
         {
-            hatImage.Parent = flyingBall;
+            hatImage.Parent = titleLabel;
             //hatImage.Location = new Point(, -66);
         }
 

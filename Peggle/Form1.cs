@@ -9,6 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * Peggle
+ * Logan Gillett
+ * Mr. T
+ * 21.06.24
+ * ICS4U
+ */
+
 namespace Peggle
 {
     public partial class Form1 : Form
@@ -16,16 +24,6 @@ namespace Peggle
         public Form1()
         {
             InitializeComponent();
-           // onStart();
-        }
-
-        void onStart()
-        {
-            Rectangle screenSize = Screen.PrimaryScreen.Bounds;
-            this.Width = screenSize.Width;
-            this.Width = screenSize.Height;
-
-            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         public static void ChangeScreen(object sender, UserControl next)

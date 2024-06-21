@@ -31,7 +31,7 @@
             this.sideBar = new System.Windows.Forms.Label();
             this.startButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
-            this.flyingBall = new System.Windows.Forms.Label();
+            this.titleLabel = new System.Windows.Forms.Label();
             this.hatImage = new System.Windows.Forms.PictureBox();
             this.notQuiteLabel = new System.Windows.Forms.Label();
             this.copyrightLabel = new System.Windows.Forms.Label();
@@ -78,17 +78,17 @@
             this.exitButton.UseVisualStyleBackColor = false;
             this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
             // 
-            // flyingBall
+            // titleLabel
             // 
-            this.flyingBall.BackColor = System.Drawing.Color.Transparent;
-            this.flyingBall.Font = new System.Drawing.Font("Tempus Sans ITC", 199.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flyingBall.ForeColor = System.Drawing.Color.Black;
-            this.flyingBall.Location = new System.Drawing.Point(3, 0);
-            this.flyingBall.Name = "flyingBall";
-            this.flyingBall.Size = new System.Drawing.Size(1310, 628);
-            this.flyingBall.TabIndex = 3;
-            this.flyingBall.Text = "Peggle";
-            this.flyingBall.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.titleLabel.BackColor = System.Drawing.Color.Transparent;
+            this.titleLabel.Font = new System.Drawing.Font("Tempus Sans ITC", 199.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleLabel.ForeColor = System.Drawing.Color.Black;
+            this.titleLabel.Location = new System.Drawing.Point(3, 0);
+            this.titleLabel.Name = "titleLabel";
+            this.titleLabel.Size = new System.Drawing.Size(1310, 628);
+            this.titleLabel.TabIndex = 3;
+            this.titleLabel.Text = "Peggle";
+            this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // hatImage
             // 
@@ -169,7 +169,7 @@
             this.Controls.Add(this.copyrightLabel);
             this.Controls.Add(this.hatImage);
             this.Controls.Add(this.notQuiteLabel);
-            this.Controls.Add(this.flyingBall);
+            this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.sideBar);
@@ -191,7 +191,7 @@
         private System.Windows.Forms.Label sideBar;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button exitButton;
-        private System.Windows.Forms.Label flyingBall;
+        private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.PictureBox hatImage;
         private System.Windows.Forms.Label notQuiteLabel;
         private System.Windows.Forms.Label copyrightLabel;

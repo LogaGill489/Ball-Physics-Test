@@ -18,45 +18,55 @@ namespace Peggle
 {
     public partial class GameScreen : UserControl
     {
+        //vars for testing the game, won't affect gameplay
         bool gameTestState = true;
+        bool active = false;
+        bool hasSpeed = true;
 
+        //ball and mouse declaration
         Ball ball = new Ball(100, 100, 20, 0, 0);
         List<Peg> pegs = new List<Peg>();
-        RectangleF mouseRect;
 
         public int lives = 10;
         public int score = 0;
         bool ballIsShot = false;
         PointF shotPosition = new PointF();
 
+        //paddle variables
         Region lPadRegion = new Region();
         Region rPadRegion = new Region();
+        RectangleF lPadHitBox = new Rectangle();
+        RectangleF rPadHitBox = new RectangleF();
         GraphicsPath gPath = new GraphicsPath();
+        Paddle paddle = new Paddle(0, 0, 0, 0, 0);
+
+        //random Gen
         Random randGen = new Random();
 
-        Paddle paddle = new Paddle(0, 0, 0, 0, 0);
-        float paddleWidth = 80;
-
-        bool hasSpeed = true;
+        //various tracking variables for a variety of tasks
         static public bool hitStartingPeg = false;
+        bool returnBall = false;
+        int spinner = 0;
+        int tracker = 0;
+        static public bool hitBottom = false;
 
+        //mouse tracking
         float xSp, ySp;
         PointF prevPosition;
         PointF cursorPoint;
+        RectangleF mouseRect;
 
+        //Stopwatches for inbetween states during shots
         Stopwatch recentlyScored = new Stopwatch();
         Stopwatch fellOffBottom = new Stopwatch();
         Stopwatch hitNothing = new Stopwatch();
-        bool returnBall = false;
+        Stopwatch clearer = new Stopwatch();
 
+        //glow effect + list for tracking hit balls
         List<Stopwatch> pegGlow = new List<Stopwatch>();
         List<int> hitArrayLocations = new List<int>();
         static public List<int> hitPegStorage = new List<int>();
         bool animationState = false;
-        Stopwatch clearer = new Stopwatch();
-
-        RectangleF lPadHitBox = new Rectangle();
-        RectangleF rPadHitBox = new RectangleF();
 
         public GameScreen()
         {
@@ -115,7 +125,6 @@ namespace Peggle
             pegs.Add(new Peg(710, 500, 50, 30, false, true));
             pegs.Add(new Peg(655, 500, 50, 30, false, true));
             pegs.Add(new Peg(625, 503, 25, 25, true, false));
-            ball.addPegs(pegs);
 
             //half diamond
             pegs.Add(new Peg(887, 600, 25, 25, true, false));
@@ -124,15 +133,18 @@ namespace Peggle
                 pegs.Add(new Peg(887 - (30 * i), 600 + (30 * i), 25, 25, true, false));
                 pegs.Add(new Peg(887 + (30 * i), 600 + (30 * i), 25, 25, true, false));
             }
+            ball.addPegs(pegs);
 
             onStart();
         }
 
         void onStart()
         {
+            //creates paddle properly and updates curves
             paddle = new Paddle((this.Width / 2) - 100, this.Height - 35, 200, 35, 9);
             updateCurve();
 
+            //randomly decides which pegs are which colours, generating 2 green, 1 purple, and 33% orange
             int storage = 0;
             for (int i = 0; i < 3; i++)
             {
@@ -144,12 +156,12 @@ namespace Peggle
                         otherPegs = randGen.Next(0, pegs.Count);
                     }
                 }
-                if (i == 2)
+                if (i == 2) //makes 3rd random peg purple
                 {
                     pegs[otherPegs].colour = new SolidBrush(Color.FromArgb(255, 214, 37, 220));
                     pegs[otherPegs].colState = "purple";
                 }
-                else
+                else //makes first 2 random pegs green
                 {
                     pegs[otherPegs].colour = new SolidBrush(Color.FromArgb(255, 17, 156, 0));
                     pegs[otherPegs].colState = "green";
@@ -158,7 +170,7 @@ namespace Peggle
                 storage = otherPegs;
             }
             int range = (pegs.Count - 3) / 3;
-            for (int i = 0; i < range; i++)
+            for (int i = 0; i < range; i++) //for loop, making 33% of remaining pegs orange
             {
                 int orangePeg = randGen.Next(0, pegs.Count);
                 if (pegs[orangePeg].colour != null)
@@ -172,7 +184,7 @@ namespace Peggle
                 pegs[orangePeg].colState = "orange";
             }
 
-            foreach (Peg p in pegs)
+            foreach (Peg p in pegs) //makes any pegs left blue
             {
                 if (p.colour == null)
                 {
@@ -184,12 +196,12 @@ namespace Peggle
 
         private void TestScreen_Paint(object sender, PaintEventArgs e)
         {
-            for (int i = 0; i < hitArrayLocations.Count; i++)
+            for (int i = 0; i < hitArrayLocations.Count; i++) //glowing effect for each of the pegs when hit
             {
                 float speedInc = 20;
                 int outwardsAdjustment = 5;
                 RectangleF glowEffect = new RectangleF(0, 0, 0, 0);
-                try
+                try //try catch is necessary because sometimes the index goes out of range, which couldn't be fixed.  Insteaad it just doesn't draw it for one or two frames, no big deal
                 {
                     glowEffect = new RectangleF(pegs[hitArrayLocations[i]].x - outwardsAdjustment - (int)(pegGlow[i].ElapsedMilliseconds / speedInc), pegs[hitArrayLocations[i]].y - outwardsAdjustment - (int)(pegGlow[i].ElapsedMilliseconds / speedInc),
                     pegs[hitArrayLocations[i]].width + (2 * outwardsAdjustment) + (2 * (int)(pegGlow[i].ElapsedMilliseconds / speedInc)), pegs[hitArrayLocations[i]].height + (2 * outwardsAdjustment) + (2 * (int)(pegGlow[i].ElapsedMilliseconds / speedInc)));
@@ -199,7 +211,7 @@ namespace Peggle
                     else
                         e.Graphics.DrawRectangle(Pens.Orange, new Rectangle((int)glowEffect.X, (int)glowEffect.Y, (int)glowEffect.Width, (int)glowEffect.Height));
                 }
-                catch {}
+                catch { }
             }
 
             if (!ballIsShot) //draws aiming line for firing
@@ -218,6 +230,7 @@ namespace Peggle
                     theta *= -1;
                 }
 
+                //counts up by the gap in magnitude / 50, adding lines 40 pixels long with 10 pixel spaces and a final smaller line to the cursor
                 for (int i = 0; i < (int)(magnitude / 50) + 1; i++)
                 {
                     float x = (40 + (10 * i) + (40 * i)) * (float)Math.Sin(theta);
@@ -322,11 +335,6 @@ namespace Peggle
             else
                 PaintText(e.Graphics, Convert.ToString(lives), 30, new PointF(ballCount.X + (ballCount.Width / 2) - 25, ballCount.Y + (ballCount.Height / 2) - 31), Color.FromArgb(255, 193, 98));
 
-            //RectangleF character = new RectangleF(this.Width - 200, 25, 200, 200);
-            //resized = new RectangleF(character.X + 40, character.Y + 40, 120, 120);
-            //e.Graphics.FillEllipse(innerFill, resized);
-            //e.Graphics.DrawImage(Resources.goldSideCircle, character);
-
             //fell off & hit a peg
             if (fellOffBottom.IsRunning)
             {
@@ -335,14 +343,6 @@ namespace Peggle
                 else
                     PaintText(e.Graphics, Convert.ToString(lives) + " balls remaining!", 30, new PointF((this.Width / 2) - 230, this.Height - 200), Color.FromArgb(0, 0, 0));
             }
-
-            //float speedInc = 10;
-            //Rectangle noBallRect = new Rectangle((this.Width / 2) - 150, (this.Height / 2) - 150, 300, 300);
-            //Rectangle flameEffect = new Rectangle(noBallRect.X - 100 - (int)(recentlyScored.ElapsedMilliseconds / speedInc), noBallRect.Y - 100 - (int)(recentlyScored.ElapsedMilliseconds / speedInc),
-            //    500 + (2 * (int)(recentlyScored.ElapsedMilliseconds / speedInc)), 500 + (2 * (int)(recentlyScored.ElapsedMilliseconds / speedInc)));
-
-            //e.Graphics.DrawImage(Resources.flameNoBall, flameEffect);
-            //e.Graphics.DrawImage(Resources.noBall, noBallRect);
 
             //free ball / no ball
             if (recentlyScored.IsRunning)
@@ -356,19 +356,22 @@ namespace Peggle
                 e.Graphics.DrawImage(Resources.freeBall, freeBallRect);
             }
 
+            //code for spinning effect + outcome
             if (hitNothing.IsRunning && hitNothing.ElapsedMilliseconds < 2000)
             {
-                if ((int)(hitNothing.ElapsedMilliseconds / 250) != spinner)
+                if ((int)(hitNothing.ElapsedMilliseconds / 250) != spinner) //updates every quarter second, changing the image
                 {
                     spinner++;
                 }
 
+                //variables for drawing purposes
                 Rectangle circImg = new Rectangle((this.Width / 2) - 150, (this.Height / 2) - 150, 300, 300);
                 Pen linePen = new Pen(Color.FromArgb(133, 158, 180), 30);
                 Pen outline = new Pen(Color.FromArgb(30, 0, 0), 32);
+
                 if (returnBall) //returns ball
                 {
-                    switch (spinner % 4)
+                    switch (spinner % 4) //tracks state of spinner and outputs appropriately
                     {
                         case 0:
                             e.Graphics.DrawImage(Resources.freeBall, circImg);
@@ -407,7 +410,7 @@ namespace Peggle
                     }
                 }
             }
-            else if (hitNothing.IsRunning)
+            else if (hitNothing.IsRunning) //displays the outcome after two seconds has passed
             {
                 if (returnBall)
                 {
@@ -431,14 +434,18 @@ namespace Peggle
             }
         }
 
-        int spinner = 0;
-        int tracker = 0;
-
         private void gameTimer_Tick(object sender, EventArgs e)
         {
-            xLabel.Text = $"X-Speed: {cursorPoint.X}";
-            yLabel.Text = $"Y-Speed: {cursorPoint.Y}";
+            //tracks X and Y variables in test state
+            if (gameTestState)
+            {
+                xLabel.Visible = true;
+                yLabel.Visible = true;
+                xLabel.Text = $"X: {cursorPoint.X}";
+                yLabel.Text = $"Y: {cursorPoint.Y}";
+            }
 
+            //removes the glow effect after hitting a peg and half a second has passed
             for (int i = 0; i < pegGlow.Count; i++)
             {
                 if (pegGlow[i].IsRunning && pegGlow[i].ElapsedMilliseconds > 500)
@@ -447,6 +454,9 @@ namespace Peggle
                     hitArrayLocations.RemoveAt(i);
                 }
             }
+
+            //each if corresponds with a different outcome of how the shot was played
+            //all lead to the same clearer branch that clears each of the hit pegs that round
             if (hitNothing.ElapsedMilliseconds > 4000)
             {
                 if (returnBall)
@@ -465,6 +475,7 @@ namespace Peggle
                 fellOffBottom.Reset();
                 clearer.Start();
             }
+            //clears each hit peg in a quick animation, then checks if there is still balls, in which case, the player can shoot again
             if (clearer.ElapsedMilliseconds > 100)
             {
                 if (hitPegStorage.Count > 0)
@@ -488,24 +499,43 @@ namespace Peggle
                     clearer.Restart();
                 }
 
-                if (tracker >= hitPegStorage.Count)
+                if (tracker >= hitPegStorage.Count) //all pegs removed
                 {
                     tracker = 0;
                     clearer.Reset();
                     hitPegStorage.Clear();
                     animationState = false;
+
+                    for (int i = 0; i < pegs.Count; i++) //checks if the game has been won
+                    {
+                        if (pegs[i].colState == "orange")
+                        {
+                            break;
+                        }
+
+                        if (pegs[i] == pegs.Last())
+                        {
+                            resetGame();
+                            Form1.ChangeScreen(this, new WinScreen());
+                        }
+                    }
+                    if (lives == 0) //ends game if player has no more balls
+                    {
+                        resetGame();
+                        Form1.ChangeScreen(this, new LoseScreen());
+                    }
                 }
             }
 
-            if (ballIsShot)
+            if (ballIsShot) //only runs if the ball is active in the arena
             {
-                ball.doGravity(this.Height, this.Width - 200, 200, 0, pegs);
-                int hitPeg = -1;
+                ball.doGravity(this.Height, this.Width - 200, 200, 0, pegs); //gravity effect
+                int hitPeg = -1; //tracks if a peg is hit, and which one if it is, then stores it in the necessary lists
                 using (Graphics g = this.CreateGraphics())
                 {
                     xLabel.Text = $"X-Position: {ball.x}";
                     yLabel.Text = $"Y-Speed: {ball.ySpeed}";
-                    for (int i = 0; i < pegs.Count; i++)
+                    for (int i = 0; i < pegs.Count; i++) //collision check for each peg, with different physics for both kinds
                     {
                         if (pegs[i].circle)
                         {
@@ -522,11 +552,12 @@ namespace Peggle
                         }
 
                     }
+                    //paddle collisions
                     ball.circleCollision(lPadHitBox, g, 1, true, paddle.speed);
                     ball.circleCollision(rPadHitBox, g, 2, true, paddle.speed);
-                    //if (removePeg) pegs = new Peg (0, 0, 0, 0, true);
                 }
 
+                //sets up peg for removal and does glow effect if hit
                 if (hitPeg != -1 && !hitPegStorage.Contains(hitPeg))
                 {
                     hitArrayLocations.Add(hitPeg);
@@ -535,6 +566,7 @@ namespace Peggle
                     hitPegStorage.Add(hitPeg);
                 }
 
+                //allows for ball pickup if test-state is active
                 if (active)
                 {
                     ball.ySpeed = 0;
@@ -549,6 +581,7 @@ namespace Peggle
                     ball.ySpeed = ySp;
                 }
 
+                //two checks for if a new shot is available
                 if (hitBottom)
                 {
                     newShot(false);
@@ -559,15 +592,16 @@ namespace Peggle
                     newShot(true);
                 }
             }
+            //moves paddle back and forth
             paddle.Move(this.Width);
             updateCurve();
 
             Refresh();
         }
 
-        private void adjustColorState(int i)
+        private void adjustColorState(int i) //adjusts the argb values of the pegs when hit
         {
-            int upAdjust = 30;
+            int upAdjust = 30; //variable to easily change intensity of hit pegs
             switch (pegs[i].colState)
             {
                 case "orange":
@@ -585,8 +619,9 @@ namespace Peggle
             }
         }
 
-        private void updateCurve()
+        private void updateCurve() //updates the curvey part of the paddles hitbox
         {
+            //resets each region and redraws them with the updated locations
             gPath.Reset();
             lPadRegion.Dispose();
             lPadHitBox = new RectangleF(paddle.x - 25, paddle.y - 15, 50, 50);
@@ -603,25 +638,31 @@ namespace Peggle
             rPadRegion.Exclude(new RectangleF(paddle.x + (int)paddle.width - 25, paddle.y + 10, 50, 25));
             rPadRegion.Exclude(new RectangleF(paddle.x + (int)paddle.width - 25, paddle.y - 15, 25, 25));
         }
-        static public bool hitBottom = false;
-        public void newShot(bool scored)
+        public void newShot(bool scored) //resets parts of the game so a new shot can be made
         {
+            //reset tracking variables, lowers lives count
             hitBottom = false;
             lives--;
             ballIsShot = false;
+
+            //hides ball offscreen
+            ball.xSpeed = 0;
+            ball.ySpeed = 0;
             ball.x = 2000;
             ball.y = 2000;
 
+            //redraws balls region to avoid it showing up after teleportation
             ball.ballPath.Reset();
             ball.ballPath.AddEllipse(new RectangleF(ball.x, ball.y, ball.size, ball.size));
             ball.ballRegion = new Region(ball.ballPath);
-            ball.xSpeed = 0;
-            ball.ySpeed = 0;
+
+            //organizes list to that it can be cleared without removing the wrong pegs and sets animation state true
             animationState = true;
             hitPegStorage.Sort();
             hitPegStorage.Reverse();
             hitStartingPeg = false;
 
+            //3 cases of how the shot ended, each causing a different outcome
             if (scored)
             {
                 lives++;
@@ -641,6 +682,8 @@ namespace Peggle
             }
         }
 
+        //used for painting text on screen, which saves rescources and makes the game less laggy
+        //side note, I stole this from our Brick Breaker game, and Rowan wrote it, so thanks for the free code!
         static public void PaintText(Graphics e, string displayText, int size, PointF position, Color color)
         {
             Font myFont = new Font("Elephant", size, FontStyle.Bold);
@@ -650,6 +693,7 @@ namespace Peggle
             myFont.Dispose();
         }
 
+        //updates cursor's position for cannon tracking
         private void TestScreen_MouseMove(object sender, MouseEventArgs e)
         {
             cursorPoint = this.PointToClient(Cursor.Position);
@@ -661,8 +705,7 @@ namespace Peggle
                 hasSpeed = false;
         }
 
-        bool active = false;
-
+        //purely for testing.  Fully disabled upon actual gameplay
         private void GameScreen_KeyDown(object sender, KeyEventArgs e)
         {
             if (gameTestState)
@@ -684,7 +727,7 @@ namespace Peggle
 
         private void TestScreen_MouseClick(object sender, MouseEventArgs e)
         {
-            if (!ballIsShot && !animationState)
+            if (!ballIsShot && !animationState) //launches the ball if it is in the cannon
             {
                 ball.x = shotPosition.X - (ball.size / 2);
                 ball.y = shotPosition.Y - (ball.size / 2);
@@ -704,6 +747,16 @@ namespace Peggle
                     active = true;
                 }
             }
+        }
+
+        private void resetGame() //resets the game
+        {
+            lives = 10;
+            pegs.Clear();
+            pegGlow.Clear();
+            hitArrayLocations.Clear();
+            Ball.recentlyHit.Clear();
+            Ball.watchReset.Clear();
         }
     }
 }
