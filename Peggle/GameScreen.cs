@@ -128,7 +128,7 @@ namespace Peggle
 
             //half diamond
             pegs.Add(new Peg(887, 600, 25, 25, true, false));
-            for (int i = 0; i < 7; i++)
+            for (int i = 1; i < 8; i++)
             {
                 pegs.Add(new Peg(887 - (30 * i), 600 + (30 * i), 25, 25, true, false));
                 pegs.Add(new Peg(887 + (30 * i), 600 + (30 * i), 25, 25, true, false));
@@ -169,7 +169,7 @@ namespace Peggle
                 }
                 storage = otherPegs;
             }
-            int range = (pegs.Count - 3) / 3;
+            int range = (pegs.Count - 3) / 4;
             for (int i = 0; i < range; i++) //for loop, making 33% of remaining pegs orange
             {
                 int orangePeg = randGen.Next(0, pegs.Count);
