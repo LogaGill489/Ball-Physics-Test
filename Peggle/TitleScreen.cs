@@ -33,5 +33,10 @@ namespace Ball_Physics_Test
         {
             Application.Exit();
         }
+
+        private void mastersButton_Click(object sender, EventArgs e)
+        {
+           Form1.ChangeScreen(this, new Masters());
+        }
     }
 }

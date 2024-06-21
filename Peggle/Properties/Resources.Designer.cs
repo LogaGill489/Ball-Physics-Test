@@ -133,6 +133,16 @@ namespace Ball_Physics_Test.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap hallBG {
+            get {
+                object obj = ResourceManager.GetObject("hallBG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap magicHat {
             get {
                 object obj = ResourceManager.GetObject("magicHat", resourceCulture);

@@ -111,6 +111,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.nameInputButton);
             this.Controls.Add(this.nameInput);
             this.Controls.Add(this.victoryLabel);
@@ -119,6 +120,7 @@
             this.Controls.Add(this.returnButton);
             this.Name = "WinScreen";
             this.Size = new System.Drawing.Size(1800, 1000);
+            this.Load += new System.EventHandler(this.WinScreen_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

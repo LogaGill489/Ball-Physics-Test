@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 /*
  * Peggle
@@ -51,6 +52,7 @@ namespace Peggle
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            WinScreen.winners = File.ReadAllLines("Winners.txt").ToList();
             ChangeScreen(this, new TitleScreen());
         }
     }

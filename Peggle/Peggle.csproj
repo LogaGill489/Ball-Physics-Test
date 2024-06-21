@@ -62,6 +62,12 @@
     <Compile Include="LoseScreen.Designer.cs">
       <DependentUpon>LoseScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="Masters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Masters.Designer.cs">
+      <DependentUpon>Masters.cs</DependentUpon>
+    </Compile>
     <Compile Include="Paddle.cs" />
     <Compile Include="Peg.cs" />
     <Compile Include="Program.cs" />
@@ -89,6 +95,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LoseScreen.resx">
       <DependentUpon>LoseScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Masters.resx">
+      <DependentUpon>Masters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -188,6 +197,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\rocks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hallBG.jpg" />
+    <Content Include="Winners.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

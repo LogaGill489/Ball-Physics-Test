@@ -25,7 +25,7 @@ namespace Ball_Physics_Test
 
         private void returnButton_Click(object sender, EventArgs e)
         {
-            Form1.ChangeScreen(this, new TitleScreen());
+            Peggle.Form1.ChangeScreen(this, new TitleScreen());
         }
     }
 }

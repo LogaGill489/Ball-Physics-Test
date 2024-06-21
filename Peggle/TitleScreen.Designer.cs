@@ -38,6 +38,7 @@
             this.rocks1 = new System.Windows.Forms.PictureBox();
             this.rocks2 = new System.Windows.Forms.PictureBox();
             this.flyingBallImage = new System.Windows.Forms.PictureBox();
+            this.mastersButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.hatImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rocks1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rocks2)).BeginInit();
@@ -157,6 +158,19 @@
             this.flyingBallImage.TabIndex = 17;
             this.flyingBallImage.TabStop = false;
             // 
+            // mastersButton
+            // 
+            this.mastersButton.BackColor = System.Drawing.Color.Gray;
+            this.mastersButton.Font = new System.Drawing.Font("Elephant", 25.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mastersButton.ForeColor = System.Drawing.Color.Black;
+            this.mastersButton.Location = new System.Drawing.Point(507, 861);
+            this.mastersButton.Name = "mastersButton";
+            this.mastersButton.Size = new System.Drawing.Size(377, 72);
+            this.mastersButton.TabIndex = 18;
+            this.mastersButton.Text = "Peggle Masters";
+            this.mastersButton.UseVisualStyleBackColor = false;
+            this.mastersButton.Click += new System.EventHandler(this.mastersButton_Click);
+            // 
             // TitleScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -164,6 +178,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImage = global::Ball_Physics_Test.Properties.Resources.worldBackground1;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Controls.Add(this.mastersButton);
             this.Controls.Add(this.flyingBallImage);
             this.Controls.Add(this.rocks1);
             this.Controls.Add(this.copyrightLabel);
@@ -198,5 +213,6 @@
         private System.Windows.Forms.PictureBox rocks1;
         private System.Windows.Forms.PictureBox rocks2;
         private System.Windows.Forms.PictureBox flyingBallImage;
+        private System.Windows.Forms.Button mastersButton;
     }
 }

@@ -19,7 +19,7 @@ namespace Peggle
     public partial class GameScreen : UserControl
     {
         //vars for testing the game, won't affect gameplay
-        bool gameTestState = true;
+        bool gameTestState = false;
         bool active = false;
         bool hasSpeed = true;
 
