@@ -17,7 +17,6 @@ namespace Peggle
         public Region circRegion = new Region();
         public Brush colour = null;
         public string colState = null;
-        public bool hit;
 
         public Peg(float _x, float _y, float _width, float _height, bool _circle, bool _upScale)
         {

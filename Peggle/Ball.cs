@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
@@ -23,6 +24,8 @@ namespace Peggle
 
         public List<bool> recentlyHit = new List<bool>();
         public List<int> watchReset = new List<int>();
+        int removedStorage = 0;
+        static public float initalSpeedMultiplier = (float)1.4;
         public Ball(float _x, float _y, float _size, float _xSpeed, float _ySpeed)
         {
             x = _x;
@@ -43,23 +46,25 @@ namespace Peggle
             {
                 if (y < screenHeight - size - 4)
                 {
-                    GameScreen.newShot(false);
+                    if (GameScreen.hitStartingPeg)
+                        ySpeed += 1;
                 }
                 else
                 {
-                    y = screenHeight - size;
-                    ySpeed *= -1;
-                    if (-1 > ySpeed || ySpeed > 1)
-                    {
-                        const int SLOWER = 3;
-                        if (ySpeed > 0)
-                            ySpeed -= SLOWER;
-                        else ySpeed += SLOWER;
-                    }
-                    else
-                    {
-                        ySpeed = 0;
-                    }
+                    //y = screenHeight - size;
+                    //ySpeed *= -1;
+                    //if (-1 > ySpeed || ySpeed > 1)
+                    //{
+                    //    const int SLOWER = 3;
+                    //    if (ySpeed > 0)
+                    //        ySpeed -= SLOWER;
+                    //    else ySpeed += SLOWER;
+                    //}
+                    //else
+                    //{
+                    //    ySpeed = 0;
+                    //}
+                    GameScreen.hitBottom = true;
                 }
             }
             else if (onBlockTimer.ElapsedMilliseconds >= 1000)
@@ -68,6 +73,7 @@ namespace Peggle
                 onBlockTimer.Reset();
                 onPeg = false;
                 pegs.Remove(stoppedPeg);
+                GameScreen.hitPegStorage.Remove(removedStorage);
             }
 
             //bounce off walls
@@ -75,11 +81,13 @@ namespace Peggle
             {
                 xSpeed *= -1;
                 x = screenWidth - size;
+                resumeGravity();
             }
             if (x < xZero)
             {
                 xSpeed *= -1;
                 x = xZero;
+                resumeGravity();
             }
             if (y < yZero)
             {
@@ -128,24 +136,16 @@ namespace Peggle
             }
         }
 
-        public void removePegs(int index) //removes selected peg from internal list
-        {
-            recentlyHit.RemoveAt(index);
-            watchReset.RemoveAt(index);
-        }
-
         bool onPeg = false;
         Stopwatch onBlockTimer = new Stopwatch();
         Peg stoppedPeg;
-        Peg lasthitPeg;
 
         bool hitSide = false;
         int tick = 4;
 
-        public bool BlockCollision(Peg p, Graphics g)
+        public bool BlockCollision(Peg p, Graphics g, int currentPeg)
         {
             RectangleF blockRec = new RectangleF(p.x, p.y, p.width, p.height);
-            RectangleF ballRec = new RectangleF(x, y, size, size);
 
             Region blockRegion = new Region(blockRec);
             blockRegion.Intersect(ballRegion);
@@ -162,6 +162,7 @@ namespace Peggle
 
             if (!blockRegion.IsEmpty(g))
             {
+                resumeGravity();
                 RectangleF location = blockRegion.GetBounds(g);
                 if (location.Width == location.Height)
                 {
@@ -200,6 +201,7 @@ namespace Peggle
                             onPeg = true;
                             onBlockTimer.Start();
                             stoppedPeg = p;
+                            removedStorage = currentPeg;
                         }
                     }
                     else
@@ -281,6 +283,7 @@ namespace Peggle
             //calculates slope of derivative
             if (!pegRegion.IsEmpty(e) && !recentlyHit[listPosition])
             {
+                resumeGravity();
                 if (y + (size / 2) < pegHitBox.Y + (pegHitBox.Height / 2) && x + (size / 2) < pegHitBox.X + (pegHitBox.Width / 2) || state == 1) //checks for top-left collision
                 {
                     xMath = x + (size / 2) - (pegHitBox.X + pegHitBox.Width / 2);
@@ -450,6 +453,16 @@ namespace Peggle
             var y = (sinTheta * (point.X - pivot.X) + cosTheta * (point.Y - pivot.Y) + pivot.Y);
 
             return new PointF((float)x, (float)y);
+        }
+
+        private void resumeGravity()
+        {
+            if (!GameScreen.hitStartingPeg)
+            {
+                GameScreen.hitStartingPeg = true;
+                xSpeed /= initalSpeedMultiplier;
+                ySpeed /= initalSpeedMultiplier;
+            }
         }
     }
 }
