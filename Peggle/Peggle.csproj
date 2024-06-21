@@ -66,6 +66,12 @@
     <Compile Include="GameScreen.Designer.cs">
       <DependentUpon>GameScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="TitleScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TitleScreen.Designer.cs">
+      <DependentUpon>TitleScreen.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -81,6 +87,9 @@
     </Compile>
     <EmbeddedResource Include="GameScreen.resx">
       <DependentUpon>GameScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TitleScreen.resx">
+      <DependentUpon>TitleScreen.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -149,6 +158,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\flameNoBall.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\magicHat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Bjornn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ballArt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rocks.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

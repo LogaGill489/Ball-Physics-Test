@@ -118,6 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ballArt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ballArt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Bjornn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Bjornn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="flameNoBall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\flameNoBall.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -7307,6 +7313,9 @@
         KBQKhUKhUCgUCoVCoVAoFAqF8tPwd3/3/wBI3Iy/hjB93AAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="magicHat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\magicHat.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="noBall" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAMoAAADJCAYAAABi8a0GAAAABGdBTUEAALGPC/xhBQAA/8dJREFUeF7s
@@ -13832,6 +13841,9 @@
         CGMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAB+Ksf8HLdCZexwPF5kAAAAASUVORK5CYII=
 </value>
+  </data>
+  <data name="rocks" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rocks.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="worldBackground1" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

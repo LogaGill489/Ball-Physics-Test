@@ -63,6 +63,26 @@ namespace Ball_Physics_Test.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ballArt {
+            get {
+                object obj = ResourceManager.GetObject("ballArt", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Bjornn {
+            get {
+                object obj = ResourceManager.GetObject("Bjornn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap flameNoBall {
             get {
                 object obj = ResourceManager.GetObject("flameNoBall", resourceCulture);
@@ -113,6 +133,16 @@ namespace Ball_Physics_Test.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap magicHat {
+            get {
+                object obj = ResourceManager.GetObject("magicHat", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap noBall {
             get {
                 object obj = ResourceManager.GetObject("noBall", resourceCulture);
@@ -146,6 +176,16 @@ namespace Ball_Physics_Test.Properties {
         internal static System.Drawing.Bitmap pegGlow {
             get {
                 object obj = ResourceManager.GetObject("pegGlow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rocks {
+            get {
+                object obj = ResourceManager.GetObject("rocks", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

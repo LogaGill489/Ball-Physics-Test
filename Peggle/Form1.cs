@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ball_Physics_Test;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -52,7 +53,7 @@ namespace Peggle
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ChangeScreen(this, new GameScreen());
+            ChangeScreen(this, new TitleScreen());
         }
     }
 }

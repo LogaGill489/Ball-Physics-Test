@@ -24,7 +24,7 @@ namespace Peggle
         List<Peg> pegs = new List<Peg>();
         RectangleF mouseRect;
 
-        public int lives = 20;
+        public int lives = 10;
         public int score = 0;
         bool ballIsShot = false;
         PointF shotPosition = new PointF();
@@ -76,6 +76,9 @@ namespace Peggle
             pegs.Add(new Peg(1085, 300, 30, 50, false, false));
 
             //left pegs
+            pegs.Add(new Peg(390, 140, 25, 25, true, false));
+            pegs.Add(new Peg(210, 200, 25, 25, true, false));
+            pegs.Add(new Peg(510, 250, 25, 25, true, false));
             pegs.Add(new Peg(370, 300, 25, 25, true, false));
             pegs.Add(new Peg(300, 410, 25, 25, true, false));
             pegs.Add(new Peg(430, 450, 25, 25, true, false));
@@ -85,6 +88,20 @@ namespace Peggle
             pegs.Add(new Peg(340, 680, 25, 25, true, false));
             pegs.Add(new Peg(580, 780, 25, 25, true, false));
             pegs.Add(new Peg(400, 850, 25, 25, true, false));
+
+            //right pegs
+            pegs.Add(new Peg(1310, 160, 25, 25, true, false));
+            pegs.Add(new Peg(1440, 235, 25, 25, true, false));
+            pegs.Add(new Peg(1550, 270, 25, 25, true, false));
+            pegs.Add(new Peg(1270, 320, 25, 25, true, false));
+            pegs.Add(new Peg(1400, 410, 25, 25, true, false));
+            pegs.Add(new Peg(1530, 460, 25, 25, true, false));
+            pegs.Add(new Peg(1330, 500, 25, 25, true, false));
+            pegs.Add(new Peg(1450, 590, 25, 25, true, false));
+            pegs.Add(new Peg(1270, 630, 25, 25, true, false));
+            pegs.Add(new Peg(1530, 690, 25, 25, true, false));
+            pegs.Add(new Peg(1290, 750, 25, 25, true, false));
+            pegs.Add(new Peg(1410, 830, 25, 25, true, false));
 
             //upper line
             pegs.Add(new Peg(1150, 503, 25, 25, true, false));
@@ -99,6 +116,14 @@ namespace Peggle
             pegs.Add(new Peg(655, 500, 50, 30, false, true));
             pegs.Add(new Peg(625, 503, 25, 25, true, false));
             ball.addPegs(pegs);
+
+            //half diamond
+            pegs.Add(new Peg(887, 600, 25, 25, true, false));
+            for (int i = 0; i < 7; i++)
+            {
+                pegs.Add(new Peg(887 - (30 * i), 600 + (30 * i), 25, 25, true, false));
+                pegs.Add(new Peg(887 + (30 * i), 600 + (30 * i), 25, 25, true, false));
+            }
 
             onStart();
         }
@@ -174,15 +199,12 @@ namespace Peggle
                     else
                         e.Graphics.DrawRectangle(Pens.Orange, new Rectangle((int)glowEffect.X, (int)glowEffect.Y, (int)glowEffect.Width, (int)glowEffect.Height));
                 }
-                catch
-                {
-                }
+                catch {}
             }
 
-            if (!ballIsShot)
+            if (!ballIsShot) //draws aiming line for firing
             {
                 Pen aimPen = new Pen(Color.Black, 3);
-                //e.Graphics.DrawLine(aimPen, cursorPoint, new Point(this.Width / 2, 5));
                 int xDif = (int)cursorPoint.X - this.Width / 2;
                 int yDif = (int)cursorPoint.Y - 5;
                 PointF prevPoint = new PointF(0, 0);
@@ -215,7 +237,7 @@ namespace Peggle
                 }
             }
 
-            foreach (Peg peg in pegs)
+            foreach (Peg peg in pegs) //draws each of the remaining pegs
             {
                 Pen trim = new Pen(Color.FromArgb(255, 193, 98));
                 if (peg.circle)
@@ -234,11 +256,12 @@ namespace Peggle
             RectangleF paddleImg = new RectangleF(paddle.x - 57, paddle.y - 29, 314, 65);
             e.Graphics.DrawImage(Resources.paddle, paddleImg);
 
+            //uncomment for paddle hitBox
             //e.Graphics.FillRectangle(Brushes.White, paddle.x, paddle.y, paddle.width, paddle.height);
             //e.Graphics.FillRegion(Brushes.White, lPadRegion);
             //e.Graphics.FillRegion(Brushes.White, rPadRegion);
 
-            //cursorPoint is a PointF tracking your position
+            //draws cannon
             Pen pen = new Pen(Color.Black, 20);
             Pen goldPen = new Pen(Color.FromArgb(255, 193, 98), 22);
             if (cursorPoint.Y >= 5)
@@ -272,9 +295,11 @@ namespace Peggle
                 }
             }
 
+            //draws circle that covers the cannon
             Rectangle circ = new Rectangle((this.Width / 2) - 60, -60, 120, 120);
             e.Graphics.DrawImage(Resources.goldCircle, circ);
 
+            //draws ball
             e.Graphics.DrawImage(Resources.peggleBall, ball.x, ball.y, ball.size, ball.size);
             //e.Graphics.FillRegion(Brushes.White, ball.ballRegion);
 
