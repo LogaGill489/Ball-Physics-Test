@@ -1,1 +1,1 @@
-Recreation of the 2007 game Peggle in made using the modern Visual Studio engine. Features a fully functional 2D-phyiscs engine made from scratch, a homescreen, a demo level, and a leaderboard displayed using txt files.
+Physics engine included in the ball.cs class. Main game screen runs the game using a few timers. Enjoy!
